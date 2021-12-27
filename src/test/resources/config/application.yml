@@ -1,14 +1,11 @@
-server:
-    port: ${PORT:5000}
-
-base-url: /api
+base-url: ""
 
 spring:
     application:
         name: taskManager
-    profiles:
-        active: ${APP_ENV}
-
+    datasource:
+        url: "jdbc:h2:mem:db"
+        username: ""
+        password: ""
     liquibase:
         change-log: classpath:db/changelog/changelog-master.yml
-        

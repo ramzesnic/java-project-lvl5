@@ -1,0 +1,11 @@
+users:
+    - id: 1
+      first_name: "testFirstName1"
+      last_name: "testLastName1"
+      email: "test@Email.com"
+      password: "testpassword1"
+    - id: 2
+      first_name: "testFirstName2"
+      last_name: "testLastName2"
+      email: "test2@Email.com"
+      password: "testpassword2"
