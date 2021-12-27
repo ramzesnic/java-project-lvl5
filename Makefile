@@ -12,13 +12,22 @@ run-dist:
 	./build/install/app/bin/app
 
 start:
-	APP_ENV=development	./gradlew bootRun
+	APP_ENV=development ./gradlew bootRun
 
 check-updates:
-	APP_ENV=production ./gradlew dependencyUpdates
+	./gradlew dependencyUpdates
 
 lint:
 	./gradlew checkstyleMain
+
+report:
+	./gradlew jacocoTestReport
+
+generate-migrations:
+	./gradle diffChangeLog
+
+db-migrate:
+	./gradlew update
 
 test:
 	APP_ENV=test ./gradlew test

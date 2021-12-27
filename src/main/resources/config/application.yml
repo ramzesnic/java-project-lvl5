@@ -1,0 +1,12 @@
+server:
+    port: ${PORT:5000}
+
+spring:
+    application:
+        name: taskManager
+    profiles:
+        active: ${APP_ENV}
+
+    liquibase:
+        change-log: classpath:db/changelog/changelog-master.yml
+        

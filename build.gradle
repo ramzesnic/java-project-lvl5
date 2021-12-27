@@ -43,7 +43,7 @@ dependencies {
       //'org.springframework.boot:spring-boot-starter-security',
       //'io.jsonwebtoken:jjwt:0.9.1',
       'org.springdoc:springdoc-openapi-ui:1.6.2',
-      //'org.liquibase:liquibase-core',
+      'org.liquibase:liquibase-core',
       'com.querydsl:querydsl-core:5.0.0',
       'com.querydsl:querydsl-jpa:5.0.0',
   )
@@ -52,6 +52,13 @@ dependencies {
       'com.h2database:h2',
       'org.postgresql:postgresql',
   )
+
+  liquibaseRuntime(
+        sourceSets.main.output,
+        'org.liquibase:liquibase-core:4.6.1',
+        'org.liquibase.ext:liquibase-hibernate5:4.6.2',
+        'org.springframework.boot:spring-boot-starter-data-jpa',
+    )
 
   annotationProcessor(
       'org.projectlombok:lombok',
@@ -89,6 +96,24 @@ jacocoTestReport {
     dependsOn test 
     reports {
       xml.required = true
+    }
+}
+
+diffChangeLog {
+    dependsOn compileJava
+}
+
+liquibase {
+    activities {
+        main {
+            changeLogFile 'src/main/resources/db/changelog/changelog-master.yml'
+            url 'jdbc:h2:./taskManager'
+            username ''
+            password ''
+            referenceUrl 'hibernate:spring:hexlet.code.entity.' +
+                        '?dialect=org.hibernate.dialect.H2Dialect' +
+                        '&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy'
+        }
     }
 }
 

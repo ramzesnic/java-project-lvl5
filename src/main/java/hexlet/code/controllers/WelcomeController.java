@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("welcome")
-public class WelcomeController {
+public final class WelcomeController {
     @GetMapping
-    public String Welcome() {
+    public String welcome() {
         return "Welcome to Spring";
     }
 }
