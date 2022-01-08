@@ -1,10 +1,12 @@
 package hexlet.code.controllers;
 
+//import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 
+//import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,11 +24,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+//import org.springframework.security.web.FilterChainProxy;
+//import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.test.web.servlet.MockMvc;
+//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.web.context.WebApplicationContext;
 
 import hexlet.code.dto.UserDto;
 import hexlet.code.dto.UserResponseDto;
+//import hexlet.code.mock.MockAuthFilter;
+//import hexlet.code.mock.WithMockCustomUser;
+import hexlet.code.util.TokenUtils;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,13 +43,26 @@ import hexlet.code.dto.UserResponseDto;
 @DBRider
 @DataSet("users.yml")
 public class UserControllerTest {
-    private static final String TEST_URL = "/users";
+    private static final String TEST_URL = "/api/users";
     private static final String EXIST_USER_EMAIL = "test@Email.com";
     private static final int USER_COUNT = 2;
 
     @Autowired
     private MockMvc mockMvc;
+    //@Autowired
+    //private WebApplicationContext context;
+    @Autowired
+    private TokenUtils util;
+    //@Autowired
+    //private FilterChainProxy chainProxy;
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    //@BeforeAll
+    //public void setup() {
+    //mockMvc = MockMvcBuilders.webAppContextSetup(context)
+    //.apply(springSecurity())
+    //.build();
+    //}
 
     @Test
     void testGetAllUsers() throws Exception {
@@ -62,9 +84,11 @@ public class UserControllerTest {
     }
 
     @Test
-    void testgetUserById() throws Exception {
+    //@WithMockCustomUser
+    void testGetUserById() throws Exception {
+        var builder = util.addTokenToRequest(get(TEST_URL + "/1"));
         MockHttpServletResponse response = mockMvc
-                .perform(get(TEST_URL + "/1"))
+                .perform(builder)
                 .andReturn()
                 .getResponse();
 
@@ -76,6 +100,7 @@ public class UserControllerTest {
     }
 
     @Test
+    // TODO mock WithSecurityContext
     void testCreateUser() throws Exception {
         UserDto userDto = this.makeUserDto();
         String content = objectMapper.writeValueAsString(userDto);
@@ -88,16 +113,6 @@ public class UserControllerTest {
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-
-        UserResponseDto userResponse = objectMapper.readValue(responsePost.getContentAsString(), UserResponseDto.class);
-
-        MockHttpServletResponse response = mockMvc
-                .perform(get(TEST_URL + "/" + userResponse.getId()))
-                .andReturn()
-                .getResponse();
-
-        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains(userDto.getEmail());
     }
 
     @Test
@@ -119,42 +134,26 @@ public class UserControllerTest {
     void testUpdateUser() throws Exception {
         UserDto userDto = this.makeUserDto();
         String content = objectMapper.writeValueAsString(userDto);
+        var builder = util.addTokenToRequest(put(TEST_URL + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content));
         MockHttpServletResponse responsePut = mockMvc
-                .perform(
-                        put(TEST_URL + "/1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(content))
+                .perform(builder)
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePut.getStatus()).isEqualTo(HttpStatus.OK.value());
-
-        UserResponseDto userResponse = objectMapper.readValue(responsePut.getContentAsString(), UserResponseDto.class);
-
-        MockHttpServletResponse response = mockMvc
-                .perform(get(TEST_URL + "/" + userResponse.getId()))
-                .andReturn()
-                .getResponse();
-
-        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains(userDto.getEmail());
     }
 
     @Test
     void deleteUser() throws Exception {
+        var builder = util.addTokenToRequest(delete(TEST_URL + "/1"));
         MockHttpServletResponse responseDelete = mockMvc
-                .perform(delete(TEST_URL + "/1"))
+                .perform(builder)
                 .andReturn()
                 .getResponse();
 
         assertThat(responseDelete.getStatus()).isEqualTo(HttpStatus.OK.value());
-
-        MockHttpServletResponse response = mockMvc
-                .perform(get(TEST_URL + "/1"))
-                .andReturn()
-                .getResponse();
-
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     private UserDto makeUserDto() {
