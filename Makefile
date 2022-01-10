@@ -24,7 +24,7 @@ report:
 	./gradlew jacocoTestReport
 
 generate-migrations:
-	./gradle diffChangeLog
+	./gradlew diffChangeLog
 
 db-migrate:
 	./gradlew update

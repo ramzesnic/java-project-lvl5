@@ -4,8 +4,3 @@ users:
       last_name: "testLastName1"
       email: "test@Email.com"
       password: groovy:new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("testpassword1")
-    - id: 2
-      first_name: "testFirstName2"
-      last_name: "testLastName2"
-      email: "test2@Email.com"
-      password: "testpassword2"

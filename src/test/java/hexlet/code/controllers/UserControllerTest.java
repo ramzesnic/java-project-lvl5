@@ -2,17 +2,18 @@ package hexlet.code.controllers;
 
 //import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 
 //import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static hexlet.code.config.SpringTestConfig.TEST_PROFILE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -21,9 +22,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.util.List;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 //import org.springframework.security.web.FilterChainProxy;
 //import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,13 +35,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.web.context.WebApplicationContext;
 
+import hexlet.code.config.SpringTestConfig;
 import hexlet.code.dto.UserDto;
 import hexlet.code.dto.UserResponseDto;
 //import hexlet.code.mock.MockAuthFilter;
 //import hexlet.code.mock.WithMockCustomUser;
-import hexlet.code.util.TokenUtils;
+import hexlet.code.util.TestUtils;
 
-@SpringBootTest
+@ActiveProfiles(TEST_PROFILE)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = SpringTestConfig.class)
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
@@ -45,17 +52,17 @@ import hexlet.code.util.TokenUtils;
 public class UserControllerTest {
     private static final String TEST_URL = "/api/users";
     private static final String EXIST_USER_EMAIL = "test@Email.com";
-    private static final int USER_COUNT = 2;
+    private static final int USER_COUNT = 1;
 
     @Autowired
     private MockMvc mockMvc;
     //@Autowired
     //private WebApplicationContext context;
     @Autowired
-    private TokenUtils util;
+    private TestUtils utils;
     //@Autowired
     //private FilterChainProxy chainProxy;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    //private ObjectMapper objectMapper = new ObjectMapper();
 
     //@BeforeAll
     //public void setup() {
@@ -74,11 +81,10 @@ public class UserControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
 
-        List<UserResponseDto> users = objectMapper
-                .readValue(
-                        response.getContentAsString(),
-                        new TypeReference<List<UserResponseDto>>() {
-                        });
+        var users = this.utils.readJSON(
+                response.getContentAsString(),
+                new TypeReference<List<UserResponseDto>>() {
+                });
 
         assertThat(users.size()).isEqualTo(USER_COUNT);
     }
@@ -86,7 +92,7 @@ public class UserControllerTest {
     @Test
     //@WithMockCustomUser
     void testGetUserById() throws Exception {
-        var builder = util.addTokenToRequest(get(TEST_URL + "/1"));
+        var builder = utils.addTokenToRequest(get(TEST_URL + "/1"));
         MockHttpServletResponse response = mockMvc
                 .perform(builder)
                 .andReturn()
@@ -103,7 +109,7 @@ public class UserControllerTest {
     // TODO mock WithSecurityContext
     void testCreateUser() throws Exception {
         UserDto userDto = this.makeUserDto();
-        String content = objectMapper.writeValueAsString(userDto);
+        String content = this.utils.writeJson(userDto);
         MockHttpServletResponse responsePost = mockMvc
                 .perform(
                         post(TEST_URL)
@@ -118,7 +124,7 @@ public class UserControllerTest {
     @Test
     void testCreateUserValidation() throws Exception {
         UserDto userDto = new UserDto("", "", "qwerttyy", "q");
-        String content = objectMapper.writeValueAsString(userDto);
+        String content = this.utils.writeJson(userDto);
         MockHttpServletResponse responsePost = mockMvc
                 .perform(
                         post(TEST_URL)
@@ -133,8 +139,8 @@ public class UserControllerTest {
     @Test
     void testUpdateUser() throws Exception {
         UserDto userDto = this.makeUserDto();
-        String content = objectMapper.writeValueAsString(userDto);
-        var builder = util.addTokenToRequest(put(TEST_URL + "/1")
+        String content = this.utils.writeJson(userDto);
+        var builder = utils.addTokenToRequest(put(TEST_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
         MockHttpServletResponse responsePut = mockMvc
@@ -147,7 +153,7 @@ public class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception {
-        var builder = util.addTokenToRequest(delete(TEST_URL + "/1"));
+        var builder = utils.addTokenToRequest(delete(TEST_URL + "/1"));
         MockHttpServletResponse responseDelete = mockMvc
                 .perform(builder)
                 .andReturn()

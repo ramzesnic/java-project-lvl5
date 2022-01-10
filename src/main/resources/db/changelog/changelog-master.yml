@@ -37,4 +37,33 @@ databaseChangeLog:
         columnNames: email
         constraintName: UC_USERSEMAIL_COL
         tableName: users
+- changeSet:
+    id: 1641823010206-1
+    author: roman (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: task_statusesPK
+            name: id
+            type: BIGINT
+        - column:
+            name: created_at
+            type: TIMESTAMP
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: task_statuses
+- changeSet:
+    id: 1641823010206-2
+    author: roman (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: UC_TASK_STATUSESNAME_COL
+        tableName: task_statuses
 
