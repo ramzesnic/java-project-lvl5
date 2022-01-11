@@ -34,7 +34,7 @@ public class TaskController {
     private static final String ID = "/{id}";
     public static final String TASK_CONTROLLER_PATH = "users";
     private static final String ONLY_OWNER_BY_ID = """
-            @TaskService.getTask(#id).get().getId() == principal.getUserId()
+            @taskServiceImpl.getTask(#id).get().getId() == principal.getUserId()
             """;
 
     @Autowired

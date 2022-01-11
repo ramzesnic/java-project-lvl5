@@ -1,0 +1,7 @@
+tasks:
+    - id: 1
+      name: "testTask"
+      description: "test description"
+      task_status_id: 1
+      author_id: 1
+      executor_id: 1
