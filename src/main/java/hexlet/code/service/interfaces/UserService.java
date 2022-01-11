@@ -1,18 +1,19 @@
 package hexlet.code.service.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import hexlet.code.dto.UserDto;
-import hexlet.code.dto.UserResponseDto;
+import hexlet.code.entity.User;
 
 public interface UserService {
-    UserResponseDto getUser(long id);
+    Optional<User> getUser(long id);
 
-    List<UserResponseDto> getUsers();
+    List<User> getUsers();
 
-    UserResponseDto createUser(UserDto userDto);
+    User createUser(UserDto userDto);
 
-    UserResponseDto updateUser(long id, UserDto userDto);
+    User updateUser(long id, UserDto userDto);
 
     void deleteUser(long id);
 }

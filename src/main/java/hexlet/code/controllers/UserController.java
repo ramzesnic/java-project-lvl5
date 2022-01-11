@@ -1,6 +1,7 @@
 package hexlet.code.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -38,13 +39,18 @@ public class UserController {
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public UserResponseDto getUser(@PathVariable("id")
     long id) {
-        return this.userService.getUser(id);
+        return this.userService.getUser(id)
+                .map(UserResponseDto::new)
+                .orElseThrow();
     }
 
     @Operation(summary = "Get all users")
     @GetMapping
     public List<UserResponseDto> getUsers() {
-        return this.userService.getUsers();
+        return this.userService.getUsers()
+                .stream()
+                .map(UserResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Operation(summary = "Create user")
@@ -53,7 +59,8 @@ public class UserController {
     @PostMapping
     public UserResponseDto createUser(@RequestBody @Valid
     UserDto userDto) {
-        return this.userService.createUser(userDto);
+        var user = this.userService.createUser(userDto);
+        return new UserResponseDto(user);
     }
 
     @Operation(summary = "Update user", security = @SecurityRequirement(name = "bearerAuth"))
@@ -62,7 +69,8 @@ public class UserController {
     public UserResponseDto updateUser(@PathVariable("id")
     long id, @RequestBody @Valid
     UserDto userDto) {
-        return this.userService.updateUser(id, userDto);
+        var user = this.userService.updateUser(id, userDto);
+        return new UserResponseDto(user);
     }
 
     @Operation(summary = "Delete user", security = @SecurityRequirement(name = "bearerAuth"))

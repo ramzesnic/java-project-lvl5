@@ -1,18 +1,19 @@
 package hexlet.code.service.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import hexlet.code.dto.TaskStatusDto;
-import hexlet.code.dto.TaskStatusResponseDto;
+import hexlet.code.entity.TaskStatus;
 
 public interface TaskStatusService {
-    TaskStatusResponseDto getStatus(long id);
+    Optional<TaskStatus> getStatus(long id);
 
-    List<TaskStatusResponseDto> getStatuses();
+    List<TaskStatus> getStatuses();
 
-    TaskStatusResponseDto createStatus(TaskStatusDto statusDto);
+    TaskStatus createStatus(TaskStatusDto statusDto);
 
-    TaskStatusResponseDto updateStatus(long id, TaskStatusDto statusDto);
+    TaskStatus updateStatus(long id, TaskStatusDto statusDto);
 
     void deleteStatus(long id);
 }

@@ -1,14 +1,13 @@
 package hexlet.code.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hexlet.code.dto.UserDto;
-import hexlet.code.dto.UserResponseDto;
 import hexlet.code.entity.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.interfaces.UserService;
@@ -22,35 +21,28 @@ public final class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseDto getUser(long id) {
-        UserResponseDto userDto = this.userRepository.findById(id)
-                .map(UserResponseDto::new)
-                .orElseThrow();
-        return userDto;
+    public Optional<User> getUser(long id) {
+        return this.userRepository.findById(id);
     }
 
     @Override
-    public List<UserResponseDto> getUsers() {
-        List<UserResponseDto> usersDto = this.userRepository.findAll()
-                .stream()
-                .map(UserResponseDto::new)
-                .collect(Collectors.toList());
-        return usersDto;
+    public List<User> getUsers() {
+        return this.userRepository.findAll();
     }
 
     @Override
-    public UserResponseDto createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         User user = new User();
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        return new UserResponseDto(this.userRepository.save(user));
+        return user;
     }
 
     @Override
-    public UserResponseDto updateUser(long id, UserDto userDto) {
+    public User updateUser(long id, UserDto userDto) {
         User user = this.userRepository.findById(id)
                 .orElseThrow();
 
@@ -59,7 +51,7 @@ public final class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        return new UserResponseDto(this.userRepository.save(user));
+        return user;
     }
 
     @Override

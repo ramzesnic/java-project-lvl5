@@ -1,6 +1,7 @@
 package hexlet.code.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -35,14 +36,19 @@ public class TaskStatusController {
     @Operation(summary = "Get all task statuses", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
     public List<TaskStatusResponseDto> getAllStatuses() {
-        return this.statusService.getStatuses();
+        return this.statusService.getStatuses()
+                .stream()
+                .map(TaskStatusResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Operation(summary = "Get task status", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = ID)
     public TaskStatusResponseDto gitStatus(@PathVariable("id")
     long id) {
-        return this.statusService.getStatus(id);
+        return this.statusService.getStatus(id)
+                .map(TaskStatusResponseDto::new)
+                .orElseThrow();
     }
 
     @Operation(summary = "Create task status", security = @SecurityRequirement(name = "bearerAuth"))
@@ -51,7 +57,8 @@ public class TaskStatusController {
     @PostMapping
     public TaskStatusResponseDto createStatus(@RequestBody @Valid
     TaskStatusDto statusDto) {
-        return this.statusService.createStatus(statusDto);
+        var status = this.statusService.createStatus(statusDto);
+        return new TaskStatusResponseDto(status);
     }
 
     @Operation(summary = "Update task status", security = @SecurityRequirement(name = "bearerAuth"))
@@ -59,7 +66,8 @@ public class TaskStatusController {
     public TaskStatusResponseDto updateStatus(@PathVariable("id")
     long id, @RequestBody
     TaskStatusDto statusDto) {
-        return this.statusService.updateStatus(id, statusDto);
+        var status = this.statusService.updateStatus(id, statusDto);
+        return new TaskStatusResponseDto(status);
     }
 
     @Operation(summary = "Delete task status", security = @SecurityRequirement(name = "bearerAuth"))

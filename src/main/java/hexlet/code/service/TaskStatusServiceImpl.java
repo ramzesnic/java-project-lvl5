@@ -1,14 +1,13 @@
 package hexlet.code.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import hexlet.code.entity.TaskStatus;
 import hexlet.code.dto.TaskStatusDto;
-import hexlet.code.dto.TaskStatusResponseDto;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.service.interfaces.TaskStatusService;
 
@@ -18,36 +17,31 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     private TaskStatusRepository statusRepository;
 
     @Override
-    public List<TaskStatusResponseDto> getStatuses() {
-        return this.statusRepository.findAll()
-                .stream()
-                .map(TaskStatusResponseDto::new)
-                .collect(Collectors.toList());
+    public List<TaskStatus> getStatuses() {
+        return this.statusRepository.findAll();
     }
 
     @Override
-    public TaskStatusResponseDto getStatus(long id) {
-        return this.statusRepository.findById(id)
-                .map(TaskStatusResponseDto::new)
-                .orElseThrow();
+    public Optional<TaskStatus> getStatus(long id) {
+        return this.statusRepository.findById(id);
     }
 
     @Override
-    public TaskStatusResponseDto createStatus(TaskStatusDto statusDto) {
+    public TaskStatus createStatus(TaskStatusDto statusDto) {
         var status = new TaskStatus();
         status.setName(statusDto.getName());
 
-        return new TaskStatusResponseDto(this.statusRepository.save(status));
+        return status;
     }
 
     @Override
-    public TaskStatusResponseDto updateStatus(long id, TaskStatusDto statusDto) {
+    public TaskStatus updateStatus(long id, TaskStatusDto statusDto) {
         var status = this.statusRepository.findById(id)
                 .orElseThrow();
 
         status.setName(statusDto.getName());
 
-        return new TaskStatusResponseDto(this.statusRepository.save(status));
+        return status;
     }
 
     @Override
