@@ -39,7 +39,7 @@ import hexlet.code.util.TestUtils;
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
-@DataSet(value = {"task_statuses.yml", "users.yml"}, transactional = true)
+@DataSet(value = {"task_statuses.yml", "users.yml"}, cleanAfter = true)
 public class TaskStatusCotrollerTest {
     private static final String TEST_URL = "/api/statuses";
     private static final String STATUS_NAME = "test";

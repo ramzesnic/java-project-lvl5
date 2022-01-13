@@ -48,7 +48,7 @@ import hexlet.code.util.TestUtils;
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
-@DataSet(value = "users.yml", transactional = true)
+@DataSet(value = "users.yml", cleanAfter = true)
 public class UserControllerTest {
     private static final String TEST_URL = "/api/users";
     private static final String EXIST_USER_EMAIL = "test@Email.com";

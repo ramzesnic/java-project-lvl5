@@ -31,7 +31,7 @@ import hexlet.code.util.TestUtils;
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
-@DataSet("users.yml")
+@DataSet(value = "users.yml", cleanAfter = true)
 public class AuthControllerTest {
     private static final String TEST_URL = "/api/login";
 

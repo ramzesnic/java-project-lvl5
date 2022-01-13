@@ -39,7 +39,7 @@ import com.github.database.rider.junit5.api.DBRider;
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
-@DataSet(value = {"task_statuses.yml", "users.yml", "tasks.yml"}, transactional = true)
+@DataSet(value = {"task_statuses.yml", "users.yml", "tasks.yml"}, cleanAfter = true)
 public class TaskControllerTest {
     private static final String TEST_URL = "/api/tasks";
     private static final String EXIST_TASK_NAME = "testTask";
