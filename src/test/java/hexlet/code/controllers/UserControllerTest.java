@@ -25,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 //import org.springframework.security.web.FilterChainProxy;
@@ -73,7 +72,7 @@ public class UserControllerTest {
 
     @Test
     void testGetAllUsers() throws Exception {
-        MockHttpServletResponse response = mockMvc
+        var response = mockMvc
                 .perform(get(TEST_URL))
                 .andReturn()
                 .getResponse();
@@ -92,11 +91,7 @@ public class UserControllerTest {
     @Test
     //@WithMockCustomUser
     void testGetUserById() throws Exception {
-        var builder = utils.addTokenToRequest(get(TEST_URL + "/1"));
-        MockHttpServletResponse response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(get(TEST_URL + "/1"));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
@@ -108,9 +103,9 @@ public class UserControllerTest {
     @Test
     // TODO mock WithSecurityContext
     void testCreateUser() throws Exception {
-        UserDto userDto = this.makeUserDto();
-        String content = this.utils.writeJson(userDto);
-        MockHttpServletResponse responsePost = mockMvc
+        var userDto = this.makeUserDto();
+        var content = this.utils.writeJson(userDto);
+        var responsePost = mockMvc
                 .perform(
                         post(TEST_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,9 +118,9 @@ public class UserControllerTest {
 
     @Test
     void testCreateUserValidation() throws Exception {
-        UserDto userDto = new UserDto("", "", "qwerttyy", "q");
-        String content = this.utils.writeJson(userDto);
-        MockHttpServletResponse responsePost = mockMvc
+        var userDto = new UserDto("", "", "qwerttyy", "q");
+        var content = this.utils.writeJson(userDto);
+        var responsePost = mockMvc
                 .perform(
                         post(TEST_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -138,28 +133,20 @@ public class UserControllerTest {
 
     @Test
     void testUpdateUser() throws Exception {
-        UserDto userDto = this.makeUserDto();
-        String content = this.utils.writeJson(userDto);
-        var builder = utils.addTokenToRequest(put(TEST_URL + "/1")
+        var userDto = this.makeUserDto();
+        var content = this.utils.writeJson(userDto);
+        var response = utils.makeSecureResponse(put(TEST_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
-        MockHttpServletResponse responsePut = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
-        assertThat(responsePut.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
     void deleteUser() throws Exception {
-        var builder = utils.addTokenToRequest(delete(TEST_URL + "/1"));
-        MockHttpServletResponse responseDelete = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(delete(TEST_URL + "/1"));
 
-        assertThat(responseDelete.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     private UserDto makeUserDto() {

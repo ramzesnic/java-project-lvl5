@@ -39,7 +39,10 @@ import com.github.database.rider.junit5.api.DBRider;
 @AutoConfigureMockMvc
 @Transactional
 @DBRider
-@DataSet(value = {"task_statuses.yml", "users.yml", "tasks.yml"}, cleanAfter = true)
+@DataSet(value = {"task_statuses.yml",
+        "users.yml",
+        "labels.yml",
+        "tasks.yml"}, cleanAfter = true)
 public class TaskControllerTest {
     private static final String TEST_URL = "/api/tasks";
     private static final String EXIST_TASK_NAME = "testTask";
@@ -53,11 +56,7 @@ public class TaskControllerTest {
 
     @Test
     void testGetAllTasks() throws Exception {
-        var builder = utils.addTokenToRequest(get(TEST_URL));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(get(TEST_URL));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
@@ -71,11 +70,7 @@ public class TaskControllerTest {
 
     @Test
     void testGetTask() throws Exception {
-        var builder = utils.addTokenToRequest(get(TEST_URL + "/1"));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(get(TEST_URL + "/1"));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
@@ -91,14 +86,10 @@ public class TaskControllerTest {
     void createTask() throws Exception {
         var taskDto = makeTaskDto();
         var content = utils.writeJson(taskDto);
-        var builder = utils.addTokenToRequest(
+        var response = utils.makeSecureResponse(
                 post(TEST_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
@@ -108,20 +99,18 @@ public class TaskControllerTest {
 
         assertThat(taskRo.getName()).isEqualTo(taskDto.getName());
         assertThat(taskRo.getAuthor().getId()).isEqualTo(1);
+        assertThat(taskRo.getTaskStatus().getName()).isEqualTo("test");
+        assertThat(taskRo.getLabels().size()).isEqualTo(1);
     }
 
     @Test
     void updateTask() throws Exception {
         var taskDto = makeTaskDto();
         var content = utils.writeJson(taskDto);
-        var builder = utils.addTokenToRequest(
+        var response = utils.makeSecureResponse(
                 put(TEST_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
@@ -134,16 +123,12 @@ public class TaskControllerTest {
 
     @Test
     void deleteTask() throws Exception {
-        var builder = utils.addTokenToRequest(delete(TEST_URL + "/1"));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(delete(TEST_URL + "/1"));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
     private TaskDto makeTaskDto() {
-        return new TaskDto("testName2", "test description", 1, 1, List.of());
+        return new TaskDto("testName2", "test description", 1, 1, List.of(1L));
     }
 }

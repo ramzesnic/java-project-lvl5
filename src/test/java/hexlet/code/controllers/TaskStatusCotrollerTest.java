@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import hexlet.code.config.SpringTestConfig;
@@ -46,18 +45,11 @@ public class TaskStatusCotrollerTest {
     private static final int STATUS_COUNT = 1;
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private TestUtils utils;
 
     @Test
     void testGetAllStatuses() throws Exception {
-        var builder = utils.addTokenToRequest(get(TEST_URL));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(get(TEST_URL));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
@@ -70,11 +62,7 @@ public class TaskStatusCotrollerTest {
 
     @Test
     void testGetStatus() throws Exception {
-        var builder = utils.addTokenToRequest(get(TEST_URL + "/1"));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
+        var response = utils.makeSecureResponse(get(TEST_URL + "/1"));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
@@ -89,14 +77,10 @@ public class TaskStatusCotrollerTest {
     void testCreateStatus() throws Exception {
         var status = this.makeStatusDto();
         var content = this.utils.writeJson(status);
-        var builder = utils.addTokenToRequest(
+        var response = utils.makeSecureResponse(
                 post(TEST_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 
@@ -111,13 +95,9 @@ public class TaskStatusCotrollerTest {
     void testUpdateStatus() throws Exception {
         var status = this.makeStatusDto();
         var content = this.utils.writeJson(status);
-        var builder = utils.addTokenToRequest(put(TEST_URL + "/1")
+        var response = utils.makeSecureResponse(put(TEST_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
         var statusRo = this.utils.readJSON(response.getContentAsString(),
                 new TypeReference<TaskStatusResponseDto>() {
@@ -129,12 +109,8 @@ public class TaskStatusCotrollerTest {
 
     @Test
     void testDeleteStatus() throws Exception {
-        var builder = utils.addTokenToRequest(
+        var response = utils.makeSecureResponse(
                 delete(TEST_URL + "/1"));
-        var response = mockMvc
-                .perform(builder)
-                .andReturn()
-                .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
