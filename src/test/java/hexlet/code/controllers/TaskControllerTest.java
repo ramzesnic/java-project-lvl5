@@ -144,6 +144,6 @@ public class TaskControllerTest {
     }
 
     private TaskDto makeTaskDto() {
-        return new TaskDto("testName2", "test description", 1, 1);
+        return new TaskDto("testName2", "test description", 1, 1, List.of());
     }
 }

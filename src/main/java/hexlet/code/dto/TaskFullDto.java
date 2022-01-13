@@ -18,5 +18,6 @@ public class TaskFullDto extends TaskDto {
         this.setDescription(taskDto.getDescription());
         this.setTaskStatusId(taskDto.getTaskStatusId());
         this.setExecutorId(taskDto.getExecutorId());
+        this.setLabelIds(taskDto.getLabelIds());
     }
 }

@@ -144,4 +144,121 @@ databaseChangeLog:
         referencedColumnNames: id
         referencedTableName: users
         validate: true
+- changeSet:
+    id: 1642085765858-1
+    author: roman (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: labelsPK
+            name: id
+            type: BIGINT
+        - column:
+            name: created_at
+            type: TIMESTAMP
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: labels
+- changeSet:
+    id: 1642085765858-2
+    author: roman (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: labels_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: tasks_id
+            type: BIGINT
+        tableName: labels_tasks
+- changeSet:
+    id: 1642085765858-3
+    author: roman (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: task_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: label_id
+            type: BIGINT
+        tableName: task_labels
+- changeSet:
+    id: 1642085765858-4
+    author: roman (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: UC_LABELSNAME_COL
+        tableName: labels
+- changeSet:
+    id: 1642085765858-5
+    author: roman (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: task_labels
+        constraintName: FK7wi3dfqb8gx9kiysuy980sbus
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: tasks
+        validate: true
+- changeSet:
+    id: 1642085765858-6
+    author: roman (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: label_id
+        baseTableName: task_labels
+        constraintName: FKlr49cbsj797rym78wepiid0sh
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: labels
+        validate: true
+- changeSet:
+    id: 1642085765858-7
+    author: roman (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: tasks_id
+        baseTableName: labels_tasks
+        constraintName: FKlx3jtdttowhjki86uq93xxxoq
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: tasks
+        validate: true
+- changeSet:
+    id: 1642085765858-8
+    author: roman (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: labels_id
+        baseTableName: labels_tasks
+        constraintName: FKqmv63hvju1l3u6a44tu2m0yop
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: labels
+        validate: true
 
