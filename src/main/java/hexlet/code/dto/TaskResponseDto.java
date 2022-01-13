@@ -1,6 +1,8 @@
 package hexlet.code.dto;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import hexlet.code.entity.Task;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ public class TaskResponseDto {
     private TaskStatusResponseDto taskStatus;
     private UserResponseDto author;
     private UserResponseDto executor;
+    private List<LabelResponseDto> labels;
 
     public TaskResponseDto(Task task) {
         this.id = task.getId();
@@ -29,5 +32,9 @@ public class TaskResponseDto {
         this.taskStatus = new TaskStatusResponseDto(task.getTaskStatus());
         this.author = new UserResponseDto(task.getAuthor());
         this.executor = new UserResponseDto(task.getExecutor());
+        this.labels = task.getLabels()
+                .stream()
+                .map(LabelResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.dto.TaskFullDto;
 import hexlet.code.entity.Task;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.service.interfaces.TaskService;
 import hexlet.code.service.interfaces.TaskStatusService;
@@ -24,6 +25,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskStatusService statusService;
+
+    @Autowired
+    private LabelRepository labelRepository;
 
     @Override
     public List<Task> getAllTasks() {
@@ -44,12 +48,15 @@ public class TaskServiceImpl implements TaskService {
         var executor = Optional.ofNullable(taskDto.getExecutorId())
                 .map(this.userService::getUser)
                 .orElse(null);
+        var labels = this.labelRepository.findAllById(taskDto.getLabelIds());
         var task = new Task();
+
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
         task.setTaskStatus(status);
         task.setAuthor(author);
         task.setExecutor(executor.get());
+        task.setLabels(labels);
 
         return this.taskRepository.save(task);
     }
@@ -64,11 +71,13 @@ public class TaskServiceImpl implements TaskService {
                 .map(this.userService::getUser)
                 .map(user -> user.orElse(null))
                 .orElse(task.getExecutor());
+        var labels = this.labelRepository.findAllById(taskDto.getLabelIds());
 
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
         task.setTaskStatus(status);
         task.setExecutor(executor);
+        task.setLabels(labels);
 
         return this.taskRepository.save(task);
     }
