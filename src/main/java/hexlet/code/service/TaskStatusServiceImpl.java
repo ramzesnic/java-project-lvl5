@@ -31,7 +31,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         var status = new TaskStatus();
         status.setName(statusDto.getName());
 
-        return status;
+        return this.statusRepository.save(status);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
         status.setName(statusDto.getName());
 
-        return status;
+        return this.statusRepository.save(status);
     }
 
     @Override

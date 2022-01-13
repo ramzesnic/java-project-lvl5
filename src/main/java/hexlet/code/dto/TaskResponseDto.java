@@ -26,6 +26,7 @@ public class TaskResponseDto {
         this.name = task.getName();
         this.description = task.getDescription();
         this.createdAt = task.getCreatedAt();
+        this.taskStatus = new TaskStatusResponseDto(task.getTaskStatus());
         this.author = new UserResponseDto(task.getAuthor());
         this.executor = new UserResponseDto(task.getExecutor());
     }

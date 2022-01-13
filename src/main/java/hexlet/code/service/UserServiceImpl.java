@@ -38,7 +38,7 @@ public final class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        return user;
+        return this.userRepository.save(user);
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        return user;
+        return this.userRepository.save(user);
     }
 
     @Override
