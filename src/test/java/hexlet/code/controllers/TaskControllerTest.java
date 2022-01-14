@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import hexlet.code.config.SpringTestConfig;
@@ -47,9 +46,6 @@ public class TaskControllerTest {
     private static final String TEST_URL = "/api/tasks";
     private static final String EXIST_TASK_NAME = "testTask";
     private static final int TASK_COUNT = 1;
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private TestUtils utils;

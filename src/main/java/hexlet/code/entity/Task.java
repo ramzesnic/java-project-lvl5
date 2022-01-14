@@ -47,7 +47,9 @@ public class Task {
     private User executor;
 
     @ManyToMany
-    @JoinTable(name = "task_labels", joinColumns = @JoinColumn(name = "task_id"), inverseJoinColumns = @JoinColumn(name = "label_id", nullable = false))
+    @JoinTable(name = "task_labels",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id", nullable = false))
     private List<Label> labels;
 
     @CreationTimestamp

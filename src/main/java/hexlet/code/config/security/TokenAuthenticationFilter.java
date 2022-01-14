@@ -27,10 +27,8 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
     public Authentication attemptAuthentication(
             HttpServletRequest request,
             HttpServletResponse response) {
-        System.out.println("====================TokenAuthenticationFilter====================");
         var authenticationToken = this.getToken(request.getHeader(HttpHeaders.AUTHORIZATION))
                 .orElseThrow(() -> new BadCredentialsException(BAD_CREDENTIALS_MSG));
-        System.out.println("====================TokenAuthenticationFilter.OK====================");
         return getAuthenticationManager()
                 .authenticate(authenticationToken);
     }
