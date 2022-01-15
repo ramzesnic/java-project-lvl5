@@ -2,10 +2,14 @@ package hexlet.code.controllers;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
+import com.querydsl.core.types.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,7 @@ import hexlet.code.config.security.interfaces.ExtendUserDetails;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.dto.TaskFullDto;
 import hexlet.code.dto.TaskResponseDto;
+import hexlet.code.entity.Task;
 import hexlet.code.service.interfaces.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,6 +50,18 @@ public class TaskController {
     public List<TaskResponseDto> getAllTasks() {
         return this.taskService.getAllTasks()
                 .stream()
+                .map(TaskResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Find tasks by", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/by")
+    public List<TaskResponseDto> findBy(
+            Authentication auth,
+            @QuerydslPredicate(root = Task.class)
+            Predicate predicate) {
+        return StreamSupport.stream(
+                this.taskService.findBy(predicate).spliterator(), false)
                 .map(TaskResponseDto::new)
                 .collect(Collectors.toList());
     }

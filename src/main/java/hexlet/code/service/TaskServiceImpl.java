@@ -3,6 +3,8 @@ package hexlet.code.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.types.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAllTasks() {
         return this.taskRepository.findAll();
+    }
+
+    @Override
+    public Iterable<Task> findBy(Predicate predicate) {
+        return this.taskRepository.findAll(predicate);
     }
 
     @Override

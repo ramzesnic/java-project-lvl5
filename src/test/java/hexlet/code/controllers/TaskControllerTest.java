@@ -41,11 +41,13 @@ import com.github.database.rider.junit5.api.DBRider;
 @DataSet(value = {"task_statuses.yml",
         "users.yml",
         "labels.yml",
-        "tasks.yml"}, cleanAfter = true)
+        "tasks.yml",
+        "task_labels.yml"
+}, cleanAfter = true)
 public class TaskControllerTest {
     private static final String TEST_URL = "/api/tasks";
     private static final String EXIST_TASK_NAME = "testTask";
-    private static final int TASK_COUNT = 1;
+    private static final int TASK_COUNT = 2;
 
     @Autowired
     private TestUtils utils;
@@ -62,6 +64,29 @@ public class TaskControllerTest {
                 });
 
         assertThat(tasks.size()).isEqualTo(TASK_COUNT);
+    }
+
+    @Test
+    void findByTest() throws Exception {
+        var response = utils.makeSecureResponse(get(TEST_URL + "/by")
+                .queryParam("taskStatusId", "1")
+                .queryParam("executorId", "1")
+                .queryParam("labels", "1")
+                .queryParam("authorId", "1"));
+
+        System.out.println();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
+
+        var tasks = utils.readJSON(response.getContentAsString(),
+                new TypeReference<List<TaskResponseDto>>() {
+                });
+
+        assertThat(tasks.size()).isEqualTo(1);
+
+        var task = tasks.get(0);
+
+        assertThat(task.getId()).isEqualTo(1);
     }
 
     @Test

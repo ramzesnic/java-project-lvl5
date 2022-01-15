@@ -9,3 +9,7 @@ spring:
         password: ""
     liquibase:
         change-log: classpath:db/changelog/changelog-master.yml
+
+logging:
+    level:
+        root: WARN

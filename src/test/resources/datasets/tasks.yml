@@ -5,3 +5,9 @@ tasks:
       task_status_id: 1
       author_id: 1
       executor_id: 1
+    - id: 2
+      name: "testTask2"
+      description: "test description"
+      task_status_id: 1
+      author_id: 1
+      executor_id: 1
