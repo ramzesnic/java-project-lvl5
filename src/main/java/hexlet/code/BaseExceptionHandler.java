@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import io.jsonwebtoken.JwtException;
 
 @ResponseBody
 @ControllerAdvice
@@ -47,12 +46,4 @@ public final class BaseExceptionHandler {
     public String userNotFoundException(UsernameNotFoundException exception) {
         return exception.getMessage();
     }
-
-    // TODO handle exception failed
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(JwtException.class)
-    public String jwtException(JwtException exception) {
-        return exception.getMessage();
-    }
-
 }

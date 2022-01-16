@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import hexlet.code.config.SpringTestConfig;
@@ -36,9 +35,6 @@ public class AuthControllerTest {
     private static final String TEST_URL = "/api/login";
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private TestUtils utils;
 
     private AuthDto authDto = new AuthDto("test@Email.com", "testpassword1");
@@ -46,12 +42,9 @@ public class AuthControllerTest {
     @Test
     void testLogin() throws Exception {
         String content = this.utils.writeJson(this.authDto);
-        MockHttpServletResponse response = mockMvc
-                .perform(post(TEST_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content))
-                .andReturn()
-                .getResponse();
+        MockHttpServletResponse response = this.utils.makeResponse(post(TEST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }

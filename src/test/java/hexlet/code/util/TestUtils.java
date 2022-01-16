@@ -46,6 +46,13 @@ public class TestUtils {
                 .getResponse();
     }
 
+    public MockHttpServletResponse makeResponse(MockHttpServletRequestBuilder builder) throws Exception {
+        return mockMvc
+                .perform(builder)
+                .andReturn()
+                .getResponse();
+    }
+
     public <T> T readJSON(String data, TypeReference<T> obj) throws JsonProcessingException {
         return this.mapper.readValue(data, obj);
     }

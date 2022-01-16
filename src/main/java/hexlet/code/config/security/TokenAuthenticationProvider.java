@@ -3,6 +3,7 @@ package hexlet.code.config.security;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import hexlet.code.config.security.interfaces.ExtendUserDetails;
 import hexlet.code.entity.User;
 import hexlet.code.service.interfaces.AuthService;
+import io.jsonwebtoken.JwtException;
 
 @Component
 public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -30,9 +32,13 @@ public class TokenAuthenticationProvider extends AbstractUserDetailsAuthenticati
     protected ExtendUserDetails retrieveUser(
             String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         String token = authentication.getCredentials().toString();
-        return this.authService.findByToken(token)
-                .map(this::buildUserDetails)
-                .orElse(null);
+        try {
+            return this.authService.findByToken(token)
+                    .map(this::buildUserDetails)
+                    .orElse(null);
+        } catch (JwtException e) {
+            throw new BadCredentialsException(e.getMessage());
+        }
     }
 
     private ExtendUserDetails buildUserDetails(User user) {
